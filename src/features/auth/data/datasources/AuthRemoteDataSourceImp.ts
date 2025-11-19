@@ -64,7 +64,7 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   async signUp(email: string, password: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/signup`, {
+      const response = await fetch(`${this.baseUrl}/signup-direct`, {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=UTF-8" },
         body: JSON.stringify({
