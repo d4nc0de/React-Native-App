@@ -1,5 +1,6 @@
 import { ILocalPreferences } from "@/src/core/iLocalPreferences";
 import { LocalPreferencesAsyncStorage } from "@/src/core/LocalPreferencesAsyncStorage";
+import { AuthUser } from "../../domain/entities/AuthUser";
 import { AuthRemoteDataSource } from "./AuthRemoteDataSource";
 
 export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -17,7 +18,7 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     this.prefs = LocalPreferencesAsyncStorage.getInstance();
   }
 
-  async login(email: string, password: string): Promise<void> {
+  async login(email: string, password: string): Promise<AuthUser> {
     try {
       const response = await fetch(`${this.baseUrl}/login`, {
         method: "POST",
@@ -27,12 +28,30 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       if (response.status === 201) {
         const data = await response.json();
-        const token = data["accessToken"];
-        const refreshToken = data["refreshToken"];
-        await this.prefs.storeData("token", token);
+        const accessToken = data.accessToken;
+        const refreshToken = data.refreshToken;
+        const apiUser = data.user as {
+          id: string;
+          email: string;
+          name: string;
+        };
+
+        // guardamos tokens
+        await this.prefs.storeData("token", accessToken);
         await this.prefs.storeData("refreshToken", refreshToken);
-        console.log("Token:", token, "\nRefresh Token:", refreshToken);
-        return Promise.resolve();
+
+        // mapeamos al AuthUser de dominio
+        const authUser: AuthUser = {
+          id: apiUser.id,
+          email: apiUser.email,
+          name: apiUser.name,
+        };
+
+        // lo persistimos para poder leerlo luego
+        await this.prefs.storeData("currentUser", JSON.stringify(authUser));
+
+        console.log("Token:", accessToken, "\nRefresh Token:", refreshToken);
+        return authUser;
       } else {
         const body = await response.json();
         throw new Error(`Login error: ${body.message}`);
@@ -67,6 +86,16 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     }
   }
 
+  async getCurrentUser(): Promise<AuthUser | null> {
+    const raw = await this.prefs.retrieveData<string>("currentUser");
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as AuthUser;
+    } catch {
+      return null;
+    }
+  }
+
   async logOut(): Promise<void> {
     try {
       const token = await this.prefs.retrieveData<string>("token");
@@ -80,6 +109,7 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.status === 201) {
         await this.prefs.removeData("token");
         await this.prefs.removeData("refreshToken");
+        await this.prefs.removeData("currentUser");
         console.log("Logged out successfully");
         return Promise.resolve();
       } else {

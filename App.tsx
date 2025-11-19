@@ -5,6 +5,7 @@ import AuthFlow from "./src/AuthFlow";
 
 import { DIProvider } from "./src/core/di/DIProvider";
 import { AuthProvider } from "./src/features/auth/presentation/context/authContext";
+import { CourseProvider } from "./src/features/courses/presentation/context/CourseContext";
 import { ProductProvider } from "./src/features/products/presentation/context/productContext";
 import { darkTheme, lightTheme } from "./src/theme/theme";
 
@@ -34,11 +35,13 @@ export default function App() {
     <PaperProvider theme={theme}>
       <DIProvider>
         <AuthProvider>
-          <ProductProvider>
-            <NavigationContainer theme={navigationTheme}>
-              <AuthFlow />
-            </NavigationContainer>
-          </ProductProvider>
+            <ProductProvider>
+                <CourseProvider>
+              <NavigationContainer theme={navigationTheme}>
+                <AuthFlow />
+              </NavigationContainer>
+              </CourseProvider>
+            </ProductProvider>
         </AuthProvider>
       </DIProvider>
     </PaperProvider>

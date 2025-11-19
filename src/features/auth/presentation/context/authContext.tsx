@@ -55,9 +55,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signup = async (email: string, password: string) => {
-    const newUser = await signupUseCase.execute(email, password);
-    setUser(newUser);
-    setIsLoggedIn(true);
+    await signupUseCase.execute(email, password);
+    // después del signup rediriges al login    
   };
 
   const logout = async () => {

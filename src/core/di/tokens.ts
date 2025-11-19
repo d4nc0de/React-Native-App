@@ -5,6 +5,8 @@ export const TOKENS = {
   SignupUC: Symbol("SignupUC"),
   LogoutUC: Symbol("LogoutUC"),
   GetCurrentUserUC: Symbol("GetCurrentUserUC"),
+
+  // Products
   ProductRemoteDS: Symbol("ProductRemoteDS"),
   ProductRepo: Symbol("ProductRepo"),
   AddProductUC: Symbol("AddProductUC"),
@@ -12,5 +14,13 @@ export const TOKENS = {
   DeleteProductUC: Symbol("DeleteProductUC"),
   GetProductsUC: Symbol("GetProductsUC"),
   GetProductByIdUC: Symbol("GetProductByIdUC"),
-  // Add Product tokens if you want to DI those too...
+
+  // ⭐ NEW: Courses
+  CourseRemoteDS: Symbol("CourseRemoteDS"),
+  CourseRepo: Symbol("CourseRepo"),
+  GetStudentCoursesUC: Symbol("GetStudentCoursesUC"),
+  GetTeacherCoursesUC: Symbol("GetTeacherCoursesUC"),
+  CreateCourseUC: Symbol("CreateCourseUC"),
+  JoinCourseUC: Symbol("JoinCourseUC"),
+
 } as const;

@@ -8,6 +8,12 @@ import { GetCurrentUserUseCase } from "@/src/features/auth/domain/usecases/GetCu
 import { LoginUseCase } from "@/src/features/auth/domain/usecases/LoginUseCase";
 import { LogoutUseCase } from "@/src/features/auth/domain/usecases/LogoutUseCase";
 import { SignupUseCase } from "@/src/features/auth/domain/usecases/SignupUseCase";
+import { CourseRemoteDataSource } from "@/src/features/courses/domain/data/datasources/CourseRemoteDataSource";
+import { CourseRepositoryImpl } from "@/src/features/courses/domain/data/repositories/CourseRepositoryImpl";
+import { CreateCourseUseCase } from "@/src/features/courses/domain/usecases/CreateCourseUseCase";
+import { GetStudentCoursesUseCase } from "@/src/features/courses/domain/usecases/GetStudentCoursesUseCase";
+import { GetTeacherCoursesUseCase } from "@/src/features/courses/domain/usecases/GetTeacherCoursesUseCase";
+import { JoinCourseUseCase } from "@/src/features/courses/domain/usecases/JoinCourseUseCase";
 import { ProductRemoteDataSourceImp } from "@/src/features/products/data/datasources/ProductRemoteDataSourceImp";
 import { ProductRepositoryImpl } from "@/src/features/products/data/repositories/ProductRepositoryImpl";
 import { AddProductUseCase } from "@/src/features/products/domain/usecases/AddProductUseCase";
@@ -45,6 +51,29 @@ export function DIProvider({ children }: { children: React.ReactNode }) {
             .register(TOKENS.GetProductsUC, new GetProductsUseCase(productRepo))
             .register(TOKENS.GetProductByIdUC, new GetProductByIdUseCase(productRepo));
 
+            // --- ⭐ COURSES ---  👈 ESTO ES LO QUE TE FALTABA
+            const courseDS = new CourseRemoteDataSource();
+            const courseRepo = new CourseRepositoryImpl(courseDS);
+
+            c
+            .register(TOKENS.CourseRemoteDS, courseDS)
+            .register(TOKENS.CourseRepo, courseRepo)
+            .register(
+                TOKENS.GetStudentCoursesUC,
+                new GetStudentCoursesUseCase(courseRepo)
+            )
+            .register(
+                TOKENS.GetTeacherCoursesUC,
+                new GetTeacherCoursesUseCase(courseRepo)
+            )
+            .register(
+                TOKENS.CreateCourseUC,
+                new CreateCourseUseCase(courseRepo)
+            )
+            .register(
+                TOKENS.JoinCourseUC,
+                new JoinCourseUseCase(courseRepo)
+            );
 
 
         return c;

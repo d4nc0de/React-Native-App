@@ -8,8 +8,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "./features/auth/presentation/context/authContext";
 import LoginScreen from "./features/auth/presentation/screens/LoginScreen";
 import SignupScreen from "./features/auth/presentation/screens/SignupScreen";
+import CreateClassScreen from "./features/courses/presentation/screens/CreateClassScreen";
+import JoinClassScreen from "./features/courses/presentation/screens/JoinClassScreen";
 import AddProductScreen from "./features/products/presentation/screens/AddProductScreen";
-import ProductListScreen from "./features/products/presentation/screens/ProductListScreen";
+import HomeScreen from "./features/products/presentation/screens/HomeScreen";
 import UpdateProductScreen from "./features/products/presentation/screens/UpdateProductScreen";
 import SettingScreen from "./features/settings/SettingScreen";
 
@@ -33,7 +35,8 @@ export default function AuthFlow() {
     return (
       <Tab.Navigator
         screenOptions={{
-          headerShown: true,
+          headerShown: false,      // ocultamos la cabecera fea
+          tabBarStyle: { display: "none" }, // ocultamos completamente la tab bar, para que no se vea el Home
           headerTitle: "Auth demo with React Navigation",
           headerRight: () => (
             <IconButton icon="logout" onPress={() => handleLogout()} />
@@ -46,7 +49,7 @@ export default function AuthFlow() {
         }}
 
       >
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Home"
           component={ProductListScreen}
           options={{
@@ -55,6 +58,11 @@ export default function AuthFlow() {
               <FontAwesome6 name="house" size={24} color={color} iconStyle="solid" />
             )
           }}
+        /> */}
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ tabBarLabel: "Home" }}
         />
         <Tab.Screen
           name="Profile"
@@ -90,6 +98,24 @@ export default function AuthFlow() {
               title: "Update Product",
               headerShown: true,
               presentation: 'modal' // Optional: makes it slide up from bottom
+            }}
+          />
+
+          <Stack.Screen
+            name="CreateClass"
+            component={CreateClassScreen}
+            options={{
+              title: "Create class",
+              headerShown: true,
+            }}
+          />
+
+          <Stack.Screen
+            name="JoinClass"
+            component={JoinClassScreen}
+            options={{
+              title: "Join class",
+              headerShown: true,
             }}
           />
         </>

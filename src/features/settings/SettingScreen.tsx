@@ -1,3 +1,4 @@
+import FloatingBottomBar from '@/src/components/FloatingBottomBar';
 import { StyleSheet } from 'react-native';
 import { Surface, Text } from 'react-native-paper';
 
@@ -6,6 +7,7 @@ export default function SettingScreen() {
     return (
         <Surface style={styles.container}>
             <Text>Settings..</Text>
+            <FloatingBottomBar />
         </Surface>
     );
 }

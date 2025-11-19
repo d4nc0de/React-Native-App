@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button, Surface, TextInput } from "react-native-paper";
 import { useProducts } from "../context/productContext";
 
+
 export default function AddProductScreen() {
   const navigation = useNavigation();
   const { addProduct } = useProducts();
