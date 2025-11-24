@@ -1,16 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
-    Avatar,
-    IconButton,
-    SegmentedButtons,
-    Surface,
-    Text,
+  Avatar,
+  IconButton,
+  SegmentedButtons,
+  Surface,
+  Text,
 } from "react-native-paper";
 
 import FloatingBottomBar from "@/src/components/FloatingBottomBar";
 import { useAuth } from "@/src/features/auth/presentation/context/authContext";
 import { useCourses } from "@/src/features/courses/presentation/context/CourseContext";
+import { useNavigation } from "@react-navigation/native";
 
 type Role = "student" | "teacher";
 
@@ -21,7 +22,8 @@ type ClassCardItem = {
   isPlus?: boolean;
 };
 
-export default function HomeScreen({ navigation }: { navigation: any }) {
+export default function HomeScreen() {
+  const navigation = useNavigation<any>();
   const { user } = useAuth();
   const { studentCourses, teacherCourses, refreshCourses } = useCourses();
 
@@ -31,23 +33,16 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
     refreshCourses();
   }, []);
 
-  // 👇 AHORA usamos los cursos reales del contexto
   const activeCourses = role === "student" ? studentCourses : teacherCourses;
 
   const classes: ClassCardItem[] = useMemo(() => {
-    // tomamos máximo 3 cursos para dejar el slot del "+"
     const base = activeCourses.slice(0, 3).map((c) => ({
       id: c.id,
       name: c.title,
       code: c.description,
     }));
 
-    const list: ClassCardItem[] = [...base];
-
-    // siempre agregamos la card "+"
-    list.push({ id: "__plus__", isPlus: true });
-
-    return list;
+    return [...base, { id: "__plus__", isPlus: true }];
   }, [activeCourses]);
 
   const handleClassPress = (item: ClassCardItem) => {
@@ -58,13 +53,14 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
         navigation.navigate("CreateClass");
       }
     } else {
-      // detalle de curso en el futuro
+      navigation.navigate("TeacherClassDetail", {
+        id: item.id,
+      });
     }
   };
 
   return (
     <Surface style={styles.root}>
-      {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <Avatar.Icon
@@ -91,7 +87,6 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
         />
       </View>
 
-      {/* GRID DE CLASES */}
       <View style={styles.grid}>
         {classes.map((item) => (
           <Surface
@@ -110,13 +105,13 @@ export default function HomeScreen({ navigation }: { navigation: any }) {
               <View style={{ flex: 1, justifyContent: "space-between" }}>
                 <View>
                   <Text style={styles.cardTitle} numberOfLines={2}>
-                    {item.name || "Class name"}
+                    {item.name ?? "Class name"}
                   </Text>
-                  {item.code ? (
+                  {item.code && (
                     <Text style={styles.cardSubtitle} numberOfLines={1}>
                       {item.code}
                     </Text>
-                  ) : null}
+                  )}
                 </View>
               </View>
             )}

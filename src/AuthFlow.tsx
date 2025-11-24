@@ -10,6 +10,7 @@ import LoginScreen from "./features/auth/presentation/screens/LoginScreen";
 import SignupScreen from "./features/auth/presentation/screens/SignupScreen";
 import CreateClassScreen from "./features/courses/presentation/screens/CreateClassScreen";
 import JoinClassScreen from "./features/courses/presentation/screens/JoinClassScreen";
+import TeacherClassDetailScreen from "./features/courses/presentation/screens/TeacherClassDetailScreen";
 import AddProductScreen from "./features/products/presentation/screens/AddProductScreen";
 import HomeScreen from "./features/products/presentation/screens/HomeScreen";
 import UpdateProductScreen from "./features/products/presentation/screens/UpdateProductScreen";
@@ -118,6 +119,12 @@ export default function AuthFlow() {
               headerShown: true,
             }}
           />
+          <Stack.Screen
+            name="TeacherClassDetail"
+            component={TeacherClassDetailScreen}
+            options={{ title: "Class Detail", headerShown: true }}
+          />
+
         </>
       ) : (
         <>
