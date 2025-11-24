@@ -1,6 +1,6 @@
-# React Native with Expo, React Navigation, and TypeScript with a clean architecture
+# React Native with Expo to develop an app to manage yours classes and qualify your partners
 
-This is a starter project for building React Native apps with [Expo](https://expo.dev/), [React Navigation](https://reactnavigation.org/), and [TypeScript](https://www.typescriptlang.org/) using a clean architecture.
+Demostration video: https://www.youtube.com/shorts/v5rGexd0mH8
 
 ## Get started
 
@@ -26,7 +26,3 @@ This is a starter project for building React Native apps with [Expo](https://exp
 - [Expo](https://expo.dev/) - A framework and platform for universal React applications.
 - [React Navigation](https://reactnavigation.org/) - Routing and navigation for your React Native
 - [Async Storage](https://react-native-async-storage.github.io/async-storage/) - An asynchronous, unencrypted, persistent, key-value storage system for React Native.
-
-## Functions
-- User authentication (login, logout, register) with Roble
-- Product management (create, update, delete) with Roble
