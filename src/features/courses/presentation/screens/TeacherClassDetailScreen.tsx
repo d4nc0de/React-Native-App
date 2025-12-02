@@ -1,8 +1,16 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import * as Clipboard from "expo-clipboard";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, IconButton, Menu, Surface, Text } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  IconButton,
+  Menu,
+  Snackbar,
+  Surface,
+  Text,
+} from "react-native-paper";
 import { useCourses } from "../context/CourseContext";
 
 type Params = {
@@ -14,12 +22,27 @@ export default function TeacherClassDetailScreen() {
   const navigation = useNavigation<any>();
   const { id } = route.params;
 
-  const { teacherCourses } = useCourses();
+  const {
+    teacherCourses,
+    categoriesByCourse,
+    loadCategories,
+    isLoading,
+  } = useCourses();
 
-  const course = teacherCourses.find((c) => c.id === id);
+  const course = teacherCourses.find((c: any) => c.id === id);
 
   const [menuVisible, setMenuVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+  const [snackVisible, setSnackVisible] = useState(false);
+
+  // cargar categorías reales de este curso
+  useEffect(() => {
+    if (course) {
+      loadCategories(course.id);
+    }
+  }, [course?.id]);
 
   if (!course) {
     return (
@@ -29,18 +52,28 @@ export default function TeacherClassDetailScreen() {
     );
   }
 
+  const selectedCategory =
+    categoriesByCourse.find((c: any) => c.id === selectedCategoryId) ?? null;
+
   const handleCopy = async () => {
     await Clipboard.setStringAsync(course.id);
+    setSnackVisible(true);
+  };
+
+  const handleManageCategories = () => {
+    navigation.navigate("CourseCategories", {
+      courseId: course.id,
+      title: course.title,
+      maxStudents: course.maxStudents,
+    });
   };
 
   return (
     <Surface style={styles.root}>
       <View style={styles.card}>
-        {/* HEADER */}
         <Text style={styles.title}>{course.title}</Text>
         <Text style={styles.subtitle}>{course.description}</Text>
 
-        {/* CLASS CODE */}
         <View style={styles.section}>
           <Text style={styles.label}>Class code</Text>
 
@@ -52,10 +85,9 @@ export default function TeacherClassDetailScreen() {
           <Text style={styles.helper}>Share this code with your students.</Text>
         </View>
 
-        {/* BUTTON - CATEGORIES */}
         <Button
           mode="contained"
-          onPress={() => navigation.navigate("CourseCategories", { id: course.id })}
+          onPress={handleManageCategories}
           style={styles.primaryBtn}
           buttonColor="#111"
           textColor="#fff"
@@ -63,7 +95,6 @@ export default function TeacherClassDetailScreen() {
           Manage categories
         </Button>
 
-        {/* DROPDOWN - SELECT CATEGORY */}
         <View style={styles.section}>
           <Text style={styles.label}>Activities by category</Text>
 
@@ -75,35 +106,54 @@ export default function TeacherClassDetailScreen() {
                 style={styles.selectBox}
                 onPress={() => setMenuVisible(true)}
               >
-                <Text style={{ color: selectedCategory ? "#111" : "#8A8F98" }}>
-                  {selectedCategory || "Select category"}
+                <Text
+                  style={{ color: selectedCategory ? "#111" : "#8A8F98" }}
+                  numberOfLines={1}
+                >
+                  {selectedCategory?.name || "Select category"}
                 </Text>
               </TouchableOpacity>
             }
           >
-            <Menu.Item
-              title="Category 1"
-              onPress={() => {
-                setSelectedCategory("Category 1");
-                setMenuVisible(false);
-              }}
-            />
-            <Menu.Item
-              title="Category 2"
-              onPress={() => {
-                setSelectedCategory("Category 2");
-                setMenuVisible(false);
-              }}
-            />
+            {categoriesByCourse.length === 0 && (
+              <Menu.Item disabled title="No categories yet" />
+            )}
+            {categoriesByCourse.map((cat: any) => (
+              <Menu.Item
+                key={cat.id}
+                title={cat.name}
+                onPress={() => {
+                  setSelectedCategoryId(cat.id);
+                  setMenuVisible(false);
+                }}
+              />
+            ))}
           </Menu>
         </View>
 
-        {/* ACTIVITIES CARD PLACEHOLDER */}
         <View style={styles.activityCard}>
-          <Text style={styles.activityText}>Activities</Text>
-          <Text style={styles.activitySmall}>Coming soon...</Text>
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <>
+              <Text style={styles.activityText}>Activities</Text>
+              <Text style={styles.activitySmall}>
+                {selectedCategory
+                  ? `Here you will see the activities for "${selectedCategory.name}".`
+                  : "Select a category to see its activities here."}
+              </Text>
+            </>
+          )}
         </View>
       </View>
+
+      <Snackbar
+        visible={snackVisible}
+        onDismiss={() => setSnackVisible(false)}
+        duration={1500}
+      >
+        Class code copied
+      </Snackbar>
     </Surface>
   );
 }
@@ -149,6 +199,7 @@ const styles = StyleSheet.create({
     fontFamily: "monospace",
     fontSize: 15,
     color: "#111",
+    flex: 1,
   },
   helper: {
     fontSize: 12,
@@ -180,6 +231,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#8A8F98",
     marginTop: 4,
+    textAlign: "center",
   },
   error: {
     color: "red",

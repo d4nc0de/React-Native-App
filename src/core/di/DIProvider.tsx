@@ -10,7 +10,9 @@ import { LogoutUseCase } from "@/src/features/auth/domain/usecases/LogoutUseCase
 import { SignupUseCase } from "@/src/features/auth/domain/usecases/SignupUseCase";
 import { CourseRemoteDataSource } from "@/src/features/courses/domain/data/datasources/CourseRemoteDataSource";
 import { CourseRepositoryImpl } from "@/src/features/courses/domain/data/repositories/CourseRepositoryImpl";
+import { CreateCategoryWithGroupsUseCase } from "@/src/features/courses/domain/usecases/CreateCategoryWithGroupsUseCase";
 import { CreateCourseUseCase } from "@/src/features/courses/domain/usecases/CreateCourseUseCase";
+import { GetCategoriesByCourseUseCase } from "@/src/features/courses/domain/usecases/GetCategoriesByCourseUseCase";
 import { GetStudentCoursesUseCase } from "@/src/features/courses/domain/usecases/GetStudentCoursesUseCase";
 import { GetTeacherCoursesUseCase } from "@/src/features/courses/domain/usecases/GetTeacherCoursesUseCase";
 import { JoinCourseUseCase } from "@/src/features/courses/domain/usecases/JoinCourseUseCase";
@@ -51,7 +53,7 @@ export function DIProvider({ children }: { children: React.ReactNode }) {
             .register(TOKENS.GetProductsUC, new GetProductsUseCase(productRepo))
             .register(TOKENS.GetProductByIdUC, new GetProductByIdUseCase(productRepo));
 
-            // --- ⭐ COURSES ---  👈 ESTO ES LO QUE TE FALTABA
+
             const courseDS = new CourseRemoteDataSource();
             const courseRepo = new CourseRepositoryImpl(courseDS);
 
@@ -73,7 +75,14 @@ export function DIProvider({ children }: { children: React.ReactNode }) {
             .register(
                 TOKENS.JoinCourseUC,
                 new JoinCourseUseCase(courseRepo)
-            );
+            ).register(
+                TOKENS.GetCategoriesByCourseUC,
+                new GetCategoriesByCourseUseCase(courseRepo)
+              )
+              .register(
+                TOKENS.CreateCategoryWithGroupsUC,
+                new CreateCategoryWithGroupsUseCase(courseRepo)
+              );
 
 
         return c;

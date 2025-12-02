@@ -23,4 +23,6 @@ export const TOKENS = {
   CreateCourseUC: Symbol("CreateCourseUC"),
   JoinCourseUC: Symbol("JoinCourseUC"),
 
+  GetCategoriesByCourseUC: Symbol("GetCategoriesByCourseUC"),
+  CreateCategoryWithGroupsUC: Symbol("CreateCategoryWithGroupsUC"),
 } as const;

@@ -1,3 +1,4 @@
+import { Category } from "../../entities/Category";
 import { Course } from "../../entities/Course";
 import { CourseRepository } from "../../repositories/CourseRepository";
 import { CourseRemoteDataSource } from "../datasources/CourseRemoteDataSource";
@@ -29,4 +30,17 @@ export class CourseRepositoryImpl implements CourseRepository {
     return this.remote.joinCourse(data);
   }
   
+  getCategoriesByCourse(courseId: string): Promise<Category[]> {
+    return this.remote.getCategoriesByCourse(courseId);
+  }
+
+  createCategoryWithGroups(params: {
+    courseId: string;
+    courseMaxStudents: number;
+    name: string;
+    groupSize: number;
+    isRamdom: boolean;
+  }): Promise<void> {
+    return this.remote.createCategoryWithGroups(params);
+  }
 }

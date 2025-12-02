@@ -36,7 +36,7 @@ export default function HomeScreen() {
   const activeCourses = role === "student" ? studentCourses : teacherCourses;
 
   const classes: ClassCardItem[] = useMemo(() => {
-    const base = activeCourses.slice(0, 3).map((c) => ({
+    const base = activeCourses.slice(0, 3).map((c: any) => ({
       id: c.id,
       name: c.title,
       code: c.description,
@@ -53,9 +53,11 @@ export default function HomeScreen() {
         navigation.navigate("CreateClass");
       }
     } else {
-      navigation.navigate("TeacherClassDetail", {
-        id: item.id,
-      });
+      if (role === "student") {
+        navigation.navigate("StudentClassDetail", { id: item.id });
+      } else {
+        navigation.navigate("TeacherClassDetail", { id: item.id });
+      }
     }
   };
 
